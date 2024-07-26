@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Review</title>
+</head>
+<body>
+    <h1>Flashcard Review</h1>
+    <div id="flashcard">
+        <p id="question">{{ question }}</p>
+        <button onclick="showAnswer()">Show Answer</button>
+        <p id="answer" style="display:none;">{{ answer }}</p>
+        <form id="review-form" style="display:none;">
+            <button type="button" onclick="submitReview(true)">I knew this</button>
+            <button type="button" onclick="submitReview(false)">I didn't know this</button>
+        </form>
+    </div>
+    <script>
+        function showAnswer() {
+            document.getElementById('answer').style.display = 'block';
+            document.getElementById('review-form').style.display = 'block';
+        }
+
+        function submitReview(success) {
+            fetch('/update_review/{{ card_id }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ success: success })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
